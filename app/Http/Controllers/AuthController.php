@@ -80,6 +80,9 @@ class AuthController extends Controller
         // \Log::info('Token created: ' . $token);
 
         return response()->json([
+            'xStatus' => '1', 
+            'xMessage' => 'Berhasil Login',
+            'data' => $user,
             'access_token' => $token,
             'token_type' => 'bearer',
         ]);

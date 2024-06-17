@@ -8,6 +8,7 @@ use App\Http\Requests\MsResidentRequest;
 use App\Models\MsResident;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image; // Import Intervention Image
 
 class MsResidentController extends Controller
@@ -38,11 +39,46 @@ class MsResidentController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('FileURL')) {
+            // $file = $request->file('FileURL');
+            // $image = Image::make($file)->encode('jpg', 75); // Kompres gambar
+            // $path = $data['IDCardNumber'] . '-' . uniqid() . '.jpg';
+            // \Storage::disk('public-uploads')->put($path, (string) $image);
+            // $data['FileURL'] = $path;
+
+            // Validasi file yang diunggah
+            $request->validate([
+                'FileURL' => 'required|image|mimes:jpeg,png,jpg,gif', // Maks 2MB untuk contoh
+            ]);
+
+            // Ambil file gambar dari request
             $file = $request->file('FileURL');
-            $image = Image::make($file)->encode('jpg', 75); // Kompres gambar
-            $path = $data['IDCardNumber'] . '-' . uniqid() . '.jpg';
+            
+            // Buat instance dari gambar menggunakan intervention/image
+            $image = Image::make($file);
+
+            // Kompres gambar
+            $image->encode('png', 75); // Kompres ke 75% kualitas
+
+            // Simpan gambar sementara untuk cek ukuran
+            $tempPath = tempnam(sys_get_temp_dir(), 'image_') . '.png';
+            $image->save($tempPath);
+
+            // Kurangi kualitas hingga ukuran <= 200KB
+            while (filesize($tempPath) > 200 * 1024) {
+                $quality = intval($image->quality() * 0.9);
+                $image->encode('png', $quality);
+                $image->save($tempPath);
+            }
+
+            // Simpan gambar ke storage
+            $path = $data['IDCardNumber'] . '-' . uniqid() . '.png';
+            // $path = Storage::put('images/' . uniqid() . '.jpg', $image->stream());
+            
             \Storage::disk('public-uploads')->put($path, (string) $image);
             $data['FileURL'] = $path;
+
+            // Hapus file sementara
+            unlink($tempPath);
         }
 
         $createdDate = now();
@@ -84,11 +120,46 @@ class MsResidentController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('FileURL')) {
+            // $file = $request->file('FileURL');
+            // $image = Image::make($file)->encode('jpg', 75); // Kompres gambar
+            // $path = $data['IDCardNumber'] . '-' . uniqid() . '.jpg';
+            // \Storage::disk('public-uploads')->put($path, (string) $image);
+            // $data['FileURL'] = $path;
+
+            // Validasi file yang diunggah
+            $request->validate([
+                'FileURL' => 'required|image|mimes:jpeg,png,jpg,gif', // Maks 2MB untuk contoh
+            ]);
+
+            // Ambil file gambar dari request
             $file = $request->file('FileURL');
-            $image = Image::make($file)->encode('jpg', 75); // Kompres gambar
-            $path = $data['IDCardNumber'] . '-' . uniqid() . '.jpg';
+            
+            // Buat instance dari gambar menggunakan intervention/image
+            $image = Image::make($file);
+
+            // Kompres gambar
+            $image->encode('png', 75); // Kompres ke 75% kualitas
+
+            // Simpan gambar sementara untuk cek ukuran
+            $tempPath = tempnam(sys_get_temp_dir(), 'image_') . '.png';
+            $image->save($tempPath);
+
+            // Kurangi kualitas hingga ukuran <= 200KB
+            while (filesize($tempPath) > 200 * 1024) {
+                $quality = intval($image->quality() * 0.9);
+                $image->encode('png', $quality);
+                $image->save($tempPath);
+            }
+
+            // Simpan gambar ke storage
+            $path = $data['IDCardNumber'] . '-' . uniqid() . '.png';
+            // $path = Storage::put('images/' . uniqid() . '.jpg', $image->stream());
+            
             \Storage::disk('public-uploads')->put($path, (string) $image);
             $data['FileURL'] = $path;
+
+            // Hapus file sementara
+            unlink($tempPath);
         }else{
             $data['FileURL'] = "";
         }
