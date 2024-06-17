@@ -25,7 +25,7 @@ Route::get('test', function () {
     return response()->json(['staus' => '1', 'message' => 'Connection Server Successfully!']);
 })->name('notauthorize');
 Route::get('notauthorize', function () {
-    return response()->json(['message' => 'Your Request can not be procesed, please login first']);
+    return response()->json(['xStatus' => '0','xMessage' => 'Your Request can not be procesed, please login first']);
 })->name('notauthorize');
 
 Route::middleware('auth:sanctum')->group(function () {

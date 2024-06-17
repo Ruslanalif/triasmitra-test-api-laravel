@@ -97,6 +97,6 @@ class AuthController extends Controller
     {
         Auth::user()->tokens()->delete();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['xStatus' => '1','xMessage' => 'Successfully logged out']);
     }
 }

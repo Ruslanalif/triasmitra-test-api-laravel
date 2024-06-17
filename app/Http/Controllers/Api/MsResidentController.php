@@ -30,12 +30,11 @@ class MsResidentController extends Controller
             $request->prmFIlter || '', 
             $request->prmUserID
         ]);
-        return response()->json($ress);
+        return response()->json(['xStatus' => '1', 'xMessage' => '', 'data' => $ress]);
     }
 
     public function store(MsResidentRequest $request)
     {
-        // $data = $request;
         $data = $request->validated();
 
         if ($request->hasFile('FileURL')) {
@@ -79,6 +78,8 @@ class MsResidentController extends Controller
 
             // Hapus file sementara
             unlink($tempPath);
+        }else{
+            $data['FileURL'] = "";
         }
 
         $createdDate = now();
