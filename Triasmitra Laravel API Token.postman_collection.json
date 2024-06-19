@@ -1,0 +1,634 @@
+{
+	"info": {
+		"_postman_id": "88ea6886-7e6a-4a54-b17a-c7ac0cee5e96",
+		"name": "Laravel API Token",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34727630"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"UserName\": \"admin\", \n\"Password\": \"abc123\", \n\"Name\": \"Admin Pusat\", \n\"Phone\": \"085813251665\", \n\"Email\": \"admin@gmail.com\", \n\"UserID\": \"\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}register",
+					"host": [
+						"{{url}}register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resident-add-data",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "IDCardNumber",
+							"value": "3201261509990103",
+							"type": "text"
+						},
+						{
+							"key": "Name",
+							"value": "Muhamad Ruslan ggg",
+							"type": "text"
+						},
+						{
+							"key": "BirthPlace",
+							"value": "Bogor",
+							"type": "text"
+						},
+						{
+							"key": "BirthDay",
+							"value": "1999-09-15",
+							"type": "text"
+						},
+						{
+							"key": "Gender",
+							"value": "L",
+							"type": "text"
+						},
+						{
+							"key": "Province",
+							"value": "32",
+							"type": "text"
+						},
+						{
+							"key": "Regency",
+							"value": "3201",
+							"type": "text"
+						},
+						{
+							"key": "District",
+							"value": "3201120",
+							"type": "text"
+						},
+						{
+							"key": "Village",
+							"value": "3201120007",
+							"type": "text"
+						},
+						{
+							"key": "Address",
+							"value": "Jl. Pertanian",
+							"type": "text"
+						},
+						{
+							"key": "Religion",
+							"value": "Islam",
+							"type": "text"
+						},
+						{
+							"key": "MaritalStatus",
+							"value": "Menikah",
+							"type": "text"
+						},
+						{
+							"key": "Employment",
+							"value": "Karyawan Swasta",
+							"type": "text"
+						},
+						{
+							"key": "Citizenship",
+							"value": "WNI",
+							"type": "text"
+						},
+						{
+							"key": "FileURL",
+							"type": "file",
+							"src": "/Users/user/Downloads/WhatsApp Image 2024-05-29 at 21.15.03.jpeg"
+						},
+						{
+							"key": "FgActive",
+							"value": "Y",
+							"type": "text"
+						},
+						{
+							"key": "UserID",
+							"value": "Admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}msresidents/store",
+					"host": [
+						"{{url}}msresidents"
+					],
+					"path": [
+						"store"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resident-edit-data",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "IDCardNumber",
+							"value": "3201261509990004",
+							"type": "text"
+						},
+						{
+							"key": "Name",
+							"value": "Muhamad Ruslan Alif",
+							"type": "text"
+						},
+						{
+							"key": "BirthPlace",
+							"value": "Bogor",
+							"type": "text"
+						},
+						{
+							"key": "BirthDay",
+							"value": "1999-09-15",
+							"type": "text"
+						},
+						{
+							"key": "Gender",
+							"value": "L",
+							"type": "text"
+						},
+						{
+							"key": "Province",
+							"value": "32",
+							"type": "text"
+						},
+						{
+							"key": "Regency",
+							"value": "3201",
+							"type": "text"
+						},
+						{
+							"key": "District",
+							"value": "3201120",
+							"type": "text"
+						},
+						{
+							"key": "Village",
+							"value": "3201120007",
+							"type": "text"
+						},
+						{
+							"key": "Address",
+							"value": "Jl. Pertanian",
+							"type": "text"
+						},
+						{
+							"key": "Religion",
+							"value": "Islam",
+							"type": "text"
+						},
+						{
+							"key": "MaritalStatus",
+							"value": "Menikah",
+							"type": "text"
+						},
+						{
+							"key": "Employment",
+							"value": "Karyawan Swasta",
+							"type": "text"
+						},
+						{
+							"key": "Citizenship",
+							"value": "WNI",
+							"type": "text"
+						},
+						{
+							"key": "FileURL",
+							"type": "file",
+							"src": "/Users/user/Desktop/Screen Shot 2024-05-24 at 11.26.13.png"
+						},
+						{
+							"key": "FgActive",
+							"value": "Y",
+							"type": "text"
+						},
+						{
+							"key": "UserID",
+							"value": "Admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}msresidents/store/5",
+					"host": [
+						"{{url}}msresidents"
+					],
+					"path": [
+						"store",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"UserName\": \"cantik123\", \n\"Password\": \"cantik123\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}login",
+					"host": [
+						"{{url}}login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-data",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer 1|gqqGbqa6LtP4qUenv6NJHkhdgRUJ9I9onVONLV8u84ae8553"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resident-get-all-data",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{url}}msresidents/get-all",
+					"host": [
+						"{{url}}msresidents"
+					],
+					"path": [
+						"get-all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resident-get-data-by-id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{url}}msresidents/get-data/5",
+					"host": [
+						"{{url}}msresidents"
+					],
+					"path": [
+						"get-data",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resident-get-data-filter",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "prmStartData",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "prmLengthData",
+							"value": "100",
+							"type": "text"
+						},
+						{
+							"key": "prmFIlter",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "prmUserID",
+							"value": "Admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}msresidents/get-filter",
+					"host": [
+						"{{url}}msresidents"
+					],
+					"path": [
+						"get-filter"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resident-delete-data",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "prmMode",
+							"value": "Soft",
+							"type": "text"
+						},
+						{
+							"key": "prmStatus",
+							"value": "Y",
+							"type": "text"
+						},
+						{
+							"key": "prmUserID",
+							"value": "Admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}msresidents/delete/5",
+					"host": [
+						"{{url}}msresidents"
+					],
+					"path": [
+						"delete",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resident-update-status-list",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "prmIDs",
+							"value": "19,18,17,15,14",
+							"type": "text"
+						},
+						{
+							"key": "prmStatus",
+							"value": "Y",
+							"type": "text"
+						},
+						{
+							"key": "prmUserID",
+							"value": "Admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}msresidents/list-status",
+					"host": [
+						"{{url}}msresidents"
+					],
+					"path": [
+						"list-status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{url}}logout",
+					"host": [
+						"{{url}}logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list-area",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "prmType",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "prmKey",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "prmUserID",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}list-area",
+					"host": [
+						"{{url}}list-area"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -144,17 +144,11 @@ class MsResidentController extends Controller
 
     }
 
-    public function update(MsResidentRequest $request, $id)
+    public function update_bu(MsResidentRequest $request, $id)
     {
         $data = $request->validated();
 
         if ($request->hasFile('FileURL')) {
-            // $file = $request->file('FileURL');
-            // $image = Image::make($file)->encode('jpg', 75); // Kompres gambar
-            // $path = $data['IDCardNumber'] . '-' . uniqid() . '.jpg';
-            // \Storage::disk('public-uploads')->put($path, (string) $image);
-            // $data['FileURL'] = $path;
-
             // Validasi file yang diunggah
             $request->validate([
                 'FileURL' => 'required|image|mimes:jpeg,png,jpg,gif', // Maks 2MB untuk contoh
@@ -185,8 +179,84 @@ class MsResidentController extends Controller
             } catch (\Exception $e) {
                 return response()->json(['xStatus' => '0', 'xMessage' => "error at downgrade quality image: '$e'"]);
             }
-            
 
+            // Simpan gambar ke storage
+            $path = $data['IDCardNumber'] . '-' . uniqid() . ".$extension";
+            // $path = Storage::put('images/' . uniqid() . '.jpg', $image->stream());
+            
+            \Storage::disk('public-uploads')->put($path, (string) $image);
+            // $data['FileURL'] = $path;
+            $data['FileURL'] = env('APP_URL') . '/storage/uploads/' . $path;
+
+            // Hapus file sementara
+            unlink($tempPath);
+        }else{
+            $data['FileURL'] = "";
+        }
+
+        $msResident = MsResident::findOrFail($id);
+
+        $modifiedDate = now();
+
+        $ress = DB::select('CALL sp_msresident_submit(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+            "EDIT",
+            $msResident->ID,
+            $data['IDCardNumber'],
+            $data['Name'],
+            $data['BirthPlace'],
+            $data['BirthDay'],
+            $data['Gender'],
+            $data['Province'],
+            $data['Regency'],
+            $data['District'],
+            $data['Village'],
+            $data['Address'],
+            $data['Religion'],
+            $data['MaritalStatus'],
+            $data['Employment'],
+            $data['Citizenship'],
+            $data['FileURL'],
+            $data['FgActive'],
+            $data['UserID']
+        ]);
+
+        return response()->json($ress[0]);
+    }
+    public function update(MsResidentRequest $request, $id)
+    {
+        $data = $request->validated();
+
+        if ($request->hasFile('FileURL')) {
+            // Validasi file yang diunggah
+            $request->validate([
+                'FileURL' => 'required|image|mimes:jpeg,png,jpg,gif', // Maks 2MB untuk contoh
+            ]);
+
+            // Ambil file gambar dari request
+            $file = $request->file('FileURL');
+            
+            // Buat instance dari gambar menggunakan intervention/image
+            $image = Image::make($file);
+
+            $extension = $file->extension();
+            try {
+            // Kompres gambar
+            // $image->encode("$extension", 75); // Kompres ke 75% kualitas
+
+            // Simpan gambar sementara untuk cek ukuran
+            $tempPath = tempnam(sys_get_temp_dir(), 'image_') . ".$extension";
+            $image->orientate()->save($tempPath);
+
+            // Kurangi kualitas hingga ukuran <= 200KB
+                // Potensial kode yang menyebabkan exception
+                // while (filesize($tempPath) > 200 * 1024) {
+                //     $quality = intval($image->quality() * 0.9);
+                //     $image->encode("$extension", $quality);
+                //     $image->orientate()->save($tempPath);
+                // }
+            } catch (\Exception $e) {
+                return response()->json(['xStatus' => '0', 'xMessage' => "error at downgrade quality image: '$e'"]);
+            }
 
             // Simpan gambar ke storage
             $path = $data['IDCardNumber'] . '-' . uniqid() . ".$extension";
