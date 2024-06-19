@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image; // Import Intervention Image
+// use Intervention\Image\ImageManagerStatic as Image;
 
 class MsResidentController extends Controller
 {
@@ -24,12 +25,15 @@ class MsResidentController extends Controller
     }
     public function getFiltered(Request $request)
     {
-        $ress = DB::select('CALL sp_msresident_get_filter(?, ?, ?, ?)', [
+        $ress = DB::select($request->prmStatus == 'ACT' ? 'CALL sp_msresident_active_get_filter(?, ?, ?, ?)' : 'CALL sp_msresident_nonactive_get_filter(?, ?, ?, ?)' , [
             $request->prmStartData, 
             $request->prmLengthData, 
             $request->prmFIlter || '', 
             $request->prmUserID
         ]);
+        if(!$ress){
+            return response()->json(['xStatus' => '0', 'xMessage' => 'Not Found Data']);
+        }
         return response()->json(['xStatus' => '1', 'xMessage' => '', 'data' => $ress]);
     }
 
@@ -48,33 +52,51 @@ class MsResidentController extends Controller
             $request->validate([
                 'FileURL' => 'required|image|mimes:jpeg,png,jpg,gif', // Maks 2MB untuk contoh
             ]);
-
+            
             // Ambil file gambar dari request
             $file = $request->file('FileURL');
             
             // Buat instance dari gambar menggunakan intervention/image
             $image = Image::make($file);
+            
+            $extension = $file->extension();
+            // dd($extension);
+            try{
+                // Kompres gambar
+                $image->encode("$extension", 75); // Kompres ke 75% kualitas
 
-            // Kompres gambar
-            $image->encode('png', 75); // Kompres ke 75% kualitas
+                // Simpan gambar sementara untuk cek ukuran
+                $tempPath = tempnam(sys_get_temp_dir(), 'image_') . ".$extension";
+                $image->orientate()->save($tempPath);
 
-            // Simpan gambar sementara untuk cek ukuran
-            $tempPath = tempnam(sys_get_temp_dir(), 'image_') . '.png';
-            $image->save($tempPath);
+                // Kurangi kualitas hingga ukuran <= 200KB
+                while (filesize($tempPath) > 200 * 1024) {
+                    $quality = intval($image->quality() * 0.9);
+                    $image->encode("$extension", $quality);
+                    $image->orientate()->save($tempPath);
+                }
+            } catch (\Exception $e) {
+                $image->encode("$extension", 20); // Kompres ke 75% kualitas
 
-            // Kurangi kualitas hingga ukuran <= 200KB
-            while (filesize($tempPath) > 200 * 1024) {
-                $quality = intval($image->quality() * 0.9);
-                $image->encode('png', $quality);
-                $image->save($tempPath);
+                // Simpan gambar sementara untuk cek ukuran
+                try{
+                    $image->encode("$extension", 15); // Kompres ke 15% kualitas
+                    // Simpan gambar sementara untuk cek ukuran
+                    $tempPath = tempnam(sys_get_temp_dir(), 'image_') . ".$extension";
+                    $image->orientate()->save($tempPath);
+                } catch (\Exception $e) {
+
+                    return response()->json(['xStatus' => '0', 'xMessage' => "error at downgrade quality image: '$e'"]);
+                }
+
             }
 
             // Simpan gambar ke storage
-            $path = $data['IDCardNumber'] . '-' . uniqid() . '.png';
+            $path = $data['IDCardNumber'] . '-' . uniqid() . ".$extension";
             // $path = Storage::put('images/' . uniqid() . '.jpg', $image->stream());
             
             \Storage::disk('public-uploads')->put($path, (string) $image);
-            $data['FileURL'] = $path;
+            $data['FileURL'] = env('APP_URL') . '/storage/uploads/' . $path;
 
             // Hapus file sementara
             unlink($tempPath);
@@ -112,8 +134,14 @@ class MsResidentController extends Controller
 
     public function show($id)
     {
-        $msResident = MsResident::findOrFail($id);
-        return response()->json($msResident);
+        // $msResident = MsResident::findOrFail($id);
+        // $msResident = MsResident::where('ID', $id)->first();
+        $msResident = DB::select('SELECT * FROM vw_msresident where ID = ?', [$id]);
+        if (!$msResident) {
+            return response()->json(['xStatus' => '0', 'xMessage' => 'Not Found Data']);
+        }
+        return response()->json(['xStatus' => '1', 'xMessage' => '','data' => $msResident]);
+
     }
 
     public function update(MsResidentRequest $request, $id)
@@ -138,26 +166,35 @@ class MsResidentController extends Controller
             // Buat instance dari gambar menggunakan intervention/image
             $image = Image::make($file);
 
+            $extension = $file->extension();
+            try {
             // Kompres gambar
-            $image->encode('png', 75); // Kompres ke 75% kualitas
+            $image->encode("$extension", 75); // Kompres ke 75% kualitas
 
             // Simpan gambar sementara untuk cek ukuran
-            $tempPath = tempnam(sys_get_temp_dir(), 'image_') . '.png';
-            $image->save($tempPath);
+            $tempPath = tempnam(sys_get_temp_dir(), 'image_') . ".$extension";
+            $image->orientate()->save($tempPath);
 
             // Kurangi kualitas hingga ukuran <= 200KB
-            while (filesize($tempPath) > 200 * 1024) {
-                $quality = intval($image->quality() * 0.9);
-                $image->encode('png', $quality);
-                $image->save($tempPath);
+                // Potensial kode yang menyebabkan exception
+                while (filesize($tempPath) > 200 * 1024) {
+                    $quality = intval($image->quality() * 0.9);
+                    $image->encode("$extension", $quality);
+                    $image->orientate()->save($tempPath);
+                }
+            } catch (\Exception $e) {
+                return response()->json(['xStatus' => '0', 'xMessage' => "error at downgrade quality image: '$e'"]);
             }
+            
+
 
             // Simpan gambar ke storage
-            $path = $data['IDCardNumber'] . '-' . uniqid() . '.png';
+            $path = $data['IDCardNumber'] . '-' . uniqid() . ".$extension";
             // $path = Storage::put('images/' . uniqid() . '.jpg', $image->stream());
             
             \Storage::disk('public-uploads')->put($path, (string) $image);
-            $data['FileURL'] = $path;
+            // $data['FileURL'] = $path;
+            $data['FileURL'] = env('APP_URL') . '/storage/uploads/' . $path;
 
             // Hapus file sementara
             unlink($tempPath);
@@ -199,6 +236,16 @@ class MsResidentController extends Controller
         $ress = DB::select('CALL sp_msresident_delete(?, ?, ?, ?)', [
             $request->prmMode, // DEL or SOFT
             $id,
+            $request->prmStatus, //Status Y / N for Soft delete
+            $request->prmUserID, //User Login for Soft Delete
+        ]);
+        return response()->json($ress[0]);
+    }
+
+    public function updateListStatus(Request $request)
+    {
+        $ress = DB::select('call sp_msresident_multy_update(?, ?, ?)', [
+            $request->prmIDs,
             $request->prmStatus, //Status Y / N for Soft delete
             $request->prmUserID, //User Login for Soft Delete
         ]);

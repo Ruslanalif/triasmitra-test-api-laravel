@@ -54,7 +54,7 @@ class MsResidentRequest extends FormRequest
     {
         return [
             'IDCardNumber.required' => 'ID Card Number field is required.',
-            'IDCardNumber.digits:16' => 'ID Card Number must be 16 digits.',
+            'IDCardNumber.digits:16' => 'ID Card Number must be 16 digits!!.',
             'Name.required' => 'Name field is required.',
             'Name.max:100' => 'Name max length 100.',
             'Name.max:100' => 'Name max length 100.',

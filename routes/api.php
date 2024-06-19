@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\MsAreaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -39,5 +40,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('msresidents/get-data/{id}', [MsResidentController::class, 'show']);
     Route::post('msresidents/store/{id}', [MsResidentController::class, 'update']);
     Route::post('msresidents/delete/{id}', [MsResidentController::class, 'destroy']);
+    Route::post('msresidents/list-status', [MsResidentController::class, 'updateListStatus']);
+
+    Route::post('list-area', [MsAreaController::class, 'getListArea']);
 
 });
